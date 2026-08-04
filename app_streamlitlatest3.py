@@ -20,10 +20,60 @@ st.set_page_config(
 )
 
 st.markdown("""
-<style>
-html, body, [class*="css"], .stApp, .stApp *,
-button, input, textarea, select, table, th, td {
-    font-family: Arial, Helvetica, sans-serif !important;
+ 
+<style> 
+.spinning-gear {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 40px;
+    z-index: 9999;
+    animation: spin 5s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+.hero {
+    position: relative;
+    overflow: hidden;
+
+    background: linear-gradient(135deg, var(--navy-950), var(--navy-800));
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 30px;
+    padding: 34px 38px;
+    margin-bottom: 24px;
+    color: white;
+    box-shadow: 0 24px 60px rgba(7,35,55,.22);
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 80%;
+    height: 100%;
+
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.15),
+        transparent
+    );
+
+    animation: shine 6s infinite;
+}
+
+@keyframes shine {
+    0% {
+        left: -150%;
+    }
+
+    100% {
+        left: 200%;
+    }
 }
 :root {
     --navy-950: #061826;
@@ -125,6 +175,14 @@ div[data-testid="stVerticalBlockBorderWrapper"] { background:var(--surface); bor
 @media (max-width:800px) { .hero { padding:28px 24px; border-radius:24px; } .block-container { padding-left:1rem; padding-right:1rem; } }
 </style>
 """, unsafe_allow_html=True)
+st.markdown(
+    '<div class="spinning-gear">⚙️</div>',
+    unsafe_allow_html=True
+)
+# st.markdown(
+#     '<div class="flying-gear">⚙️</div>',
+#     unsafe_allow_html=True
+# )
 
 APP_DIR = Path(__file__).resolve().parent
 MASTER_PATH = APP_DIR / "Master_Linear_Guides2.xlsx"
@@ -343,7 +401,8 @@ if st.button("Vergleichbare Produkte finden", type="primary", use_container_widt
 results = st.session_state.get("results")
 if results is not None:
     if results.empty:
-        st.warning("Kein Produkt hat die Pflichtprüfungen und die Mindestanforderung an die Datenabdeckung erfüllt.")
+        st.warning("Kein Produkt hat die Pflichtprüfungen und die Mindestanforderung an die Datenabdeckung erfüllt. Bitte passen Sie die Vergleichseinstellungen an und versuchen Sie es erneut.")
+        st.warning("Hinweis: Die Pflichtprüfungen befinden sich in der 'Maßliche Grenzen'-Sektion. Die Datenabdeckung wird in der Seitenleiste unter 'Tragfähigkeitsanforderung' eingestellt.")
     else:
         st.markdown(
             f'<div class="result-card"><span class="small-note">Referenzprodukt</span><br><b>{st.session_state.get("source_label", "")}</b></div>',
@@ -386,6 +445,50 @@ if results is not None:
 
         with tab2:
             st.markdown('<div class="section-title">Technischer Parametervergleich</div>', unsafe_allow_html=True)
+            # st.image(
+            #     APP_DIR / "boschsymbol.png",
+            #     caption="Parameterbezeichnungen gemäß Bosch Rexroth AG",
+            #     width= 550
+            # )
+            # st.markdown('</div>', unsafe_allow_html=True)
+            # col1, col2, col3 = st.columns([1,2,1])
+
+            # with col2:
+            #     st.image(
+            #         APP_DIR / "boschsymbol.png",
+            #         caption="Parameterbezeichnungen gemäß Bosch Rexroth AG",
+            #         width=550
+            #     )
+            col1, col2 = st.columns([1.2, 1])
+
+            with col1:
+                st.image(
+                    APP_DIR / "boschsymbol.png",
+                    caption="Parameterbezeichnungen gemäß Bosch Rexroth AG",
+                    width=650
+                )
+
+            with col2:
+                st.markdown("""
+
+                | Parameter | Beschreibung |
+                |-----------|-------------|
+                | A | Wagenbreite |
+                | A2 | Schienenbreite |
+                | B | Gesamtlänge des Führungswagens |
+                | H | Gesamthöhe des Führungswagens |
+                | H2 | Schienenhöhe |
+                | E1 | Mittenabstand der Befestigungsbohrungen (quer) |
+                | E2 | Mittenabstand der Befestigungsbohrungen (längs) |
+                | C | Dynamische Tragzahl (N) |
+                | C0 | Statische Tragzahl (N) |
+                | Mt | Dynamische Torsionstragmoment (Nm) |
+                | Mt0 | Statische Torsionstragmoment (Nm) |
+                | ML | Dynamische Längstragmoment (Nm) |
+                | ML0 | Statische Längstragmoment (Nm) |
+                            
+                """)
+            st.markdown("<br>", unsafe_allow_html=True) 
             st.markdown('<div class="section-subtitle">Überprüfen Sie Referenz- und Kandidatenwerte direkt. Differenzen werden als Kandidatenwert minus Referenzwert berechnet.</div>', unsafe_allow_html=True)
             labels = [f'#{i+1} — {r.Target_Company} — {r.Target_Model}' for i, r in results.iterrows()]
             chosen_index = st.selectbox("Zu prüfender Kandidat", range(len(labels)), format_func=lambda i: labels[i])
