@@ -208,8 +208,8 @@ def vertical_missing(value) -> str:
 # Hero
 st.markdown("""
 <div class="hero">
-  <div class="hero-eyebrow">Austauschwerkzeug – Bosch Rexroth AG</div>
-  <h1>Linearführungs-Austauschvergleich</h1>
+  <div class="hero-eyebrow">Umschlüsselungstool – Bosch Rexroth AG</div>
+  <h1>Linearführungswagen-Umschlüsselungstool</h1>
   <p>Wählen Sie ein Referenzprodukt und identifizieren Sie technisch ähnliche Alternativen mithilfe transparenter Filter, vergleichbarer Parameter und einer nachvollziehbaren Rangfolge.</p>
 </div>
 """, unsafe_allow_html=True)
